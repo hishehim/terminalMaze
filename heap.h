@@ -4,35 +4,38 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "maze.h"
-
 
 struct HeapNode {
-    struct MazeCell *cell;
+	unsigned short int x, y;
     int weight;
 };
 
 struct BinaryHeap {
-    int capacity; // memory size
-    int size; // elements count
+    unsigned int capacity; // memory size
+    unsigned int size; // elements count
     struct HeapNode *heapArray;
 };
 
 
-void initHeap(struct BinaryHeap * const heap, size_t size) {
+void deleteHeap(struct BinaryHeap * const heap) {
+    free(heap->heapArray);
+	heap->size = 0;
+	heap->capacity = 0;
+}
+
+void initHeap(struct BinaryHeap * const heap, const unsigned int size) {
+	deleteHeap(heap);
     heap->heapArray = calloc(sizeof(struct HeapNode),  size + 1);
     heap->size = 0;
     heap->capacity = size + 1;
+	printf("\tHeap Size: %d bytes\n",sizeof(struct HeapNode) * heap->capacity);
 }
 
-void cleanHeap(struct BinaryHeap *heap) {
-    free(heap->heapArray);
-}
 
 /**
  * Using mark Allen Weiss's implementation of binary heap in c++
  */
-int insertHeap(struct BinaryHeap *heap, const struct HeapNode * const node) {
+int insertHeap(struct BinaryHeap * const heap, const struct HeapNode * const node) {
     if ( heap->size == (heap->capacity - 1) )
         return -1;
     struct HeapNode *array = heap->heapArray;
@@ -44,7 +47,7 @@ int insertHeap(struct BinaryHeap *heap, const struct HeapNode * const node) {
     array[ hole ] = *node;
 }
 
-void percolateDown(struct BinaryHeap *heap, int hole) {
+void percolateDown(struct BinaryHeap * const heap, int hole) {
     int child;
     struct HeapNode *array = heap->heapArray; 
     struct HeapNode tmp = array[hole];
@@ -61,7 +64,7 @@ void percolateDown(struct BinaryHeap *heap, int hole) {
     array[hole] = tmp;
 }
 
-int getMinHeap(struct BinaryHeap *heap, struct HeapNode *output) {
+int getMinHeap(struct BinaryHeap * const heap, struct HeapNode * const output) {
     if (heap->size == 0)
         return -1;
     struct HeapNode *array = heap->heapArray;
@@ -70,18 +73,7 @@ int getMinHeap(struct BinaryHeap *heap, struct HeapNode *output) {
     percolateDown(heap,1);
     return 0;
 }
-
-void printHeap(struct BinaryHeap *heap) {
-    int i;
-    struct HeapNode *array = heap->heapArray;
-    for (i = 1; i <= heap->size; i++) {
-        struct MazeCell *cell = array[i].cell;
-        printf("(%d,%d)[%d]\n",cell->x, cell->y, array[i].weight);
-    }
-}
-
 /**
  * Using mark Allen Weiss's implementation of binary heap in c++
  */
-
 #endif

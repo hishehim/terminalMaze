@@ -1,3 +1,3 @@
 all:
-	gcc test.c -o test
+	gcc -g game.c -o game
 

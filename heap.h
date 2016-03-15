@@ -4,31 +4,36 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 struct HeapNode {
-	unsigned short int x, y;
-    int weight;
+	char dRow, dCol; 
+	short int row, col;
+    unsigned char weight;
 };
 
 struct BinaryHeap {
-    unsigned int capacity; // memory size
     unsigned int size; // elements count
+    unsigned int capacity; // memory size
     struct HeapNode *heapArray;
 };
 
 
 void deleteHeap(struct BinaryHeap * const heap) {
-    free(heap->heapArray);
-	heap->size = 0;
-	heap->capacity = 0;
+    if (heap->heapArray != NULL) {
+        free(heap->heapArray);
+        heap->heapArray = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
 }
 
 void initHeap(struct BinaryHeap * const heap, const unsigned int size) {
-	deleteHeap(heap);
+    deleteHeap(heap);
     heap->heapArray = calloc(sizeof(struct HeapNode),  size + 1);
+	assert(heap->heapArray != NULL);
     heap->size = 0;
     heap->capacity = size + 1;
-	printf("\tHeap Size: %d bytes\n",sizeof(struct HeapNode) * heap->capacity);
 }
 
 
@@ -64,7 +69,7 @@ void percolateDown(struct BinaryHeap * const heap, int hole) {
     array[hole] = tmp;
 }
 
-int getMinHeap(struct BinaryHeap * const heap, struct HeapNode * const output) {
+int popMinHeap(struct BinaryHeap * const heap, struct HeapNode * const output) {
     if (heap->size == 0)
         return -1;
     struct HeapNode *array = heap->heapArray;
